@@ -66,3 +66,8 @@ result = linear_est.evaluate(eval_input_fn)  # Evaluate the model using the eval
 clear_output()  # Clear console output
 print(result['accuracy'])  # Print the accuracy of the model
 
+pred_dicts = list(linear_est.predict(eval_input_fn))
+probs = pd.Series([pred['probabilities'][1] for pred in pred_dicts])
+
+probs.plot(kind='hist', bins=20, title='predicted probabilities')
+
