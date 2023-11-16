@@ -1,12 +1,14 @@
 # Imports
 import os
+import tensorflow_datasets as tfds
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
+
 keras = tf.keras
 
 # Dataset
-import tensorflow_datasets as tfds
+
 tfds.disable_progress_bar()
 
 # Split the data manually into 80% training, 10% testing, 10% validation
@@ -28,14 +30,16 @@ for image, label in raw_train.take(5):
 # Data preprocessing
 IMG_SIZE = 160  # All images will be resized to 160x160
 
-def format_example(image, label):
+
+def format_example(input_name, label):
     """
     Returns an image that is reshaped to IMG_SIZE
     """
-    image = tf.cast(image, tf.float32)
-    image = (image / 127.5) - 1
-    image = tf.image.resize(image, (IMG_SIZE, IMG_SIZE))
-    return image, label
+    input_name = tf.cast(input_name, tf.float32)
+    input_name = (input_name / 127.5) - 1
+    input_name = tf.image.resize(input_name, (IMG_SIZE, IMG_SIZE))
+    return input_name, label
+
 
 train = raw_train.map(format_example)
 validation = raw_validation.map(format_example)
@@ -103,6 +107,9 @@ history = model.fit(train_batches, epochs=initial_epochs, validation_data=valida
 
 # Save the model
 model.save("dogs_vs_cats.h5")
+
+# We can save the model and reload it at any time in the future
+new_model = tf.keras.models.load_model('dogs_vs_cats.h5')
 
 # We can save the model and reload it at any time in the future
 new_model = tf.keras.models.load_model('dogs_vs_cats.h5')
